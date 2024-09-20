@@ -1,0 +1,65 @@
+// Pick
+
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+type MyPick<T, K extends keyof T> = {
+  [k in K]: T[k]
+}
+
+type TodoPreview = MyPick<Todo, 'title' | 'completed'>
+
+const todo: TodoPreview = {
+    title: 'Clean room',
+    completed: false,
+
+}
+
+
+// Return Type
+const fn = (v: boolean) => {
+  if (v)
+    return 1
+  else
+    return 2
+}
+
+type MyReturnType<T> = T extends (...args:never[]) => infer P ? P : never
+
+type a = MyReturnType<typeof fn> // should be "1 | 2"
+
+
+
+// ReadOnly 
+interface Todo {
+  title: string
+  description: string
+}
+
+type MyReadonly<T> = {
+    readonly [k in keyof T]: T[k]
+}
+
+const todo: MyReadonly<Todo> = {
+  title: "Hey",
+  description: "foobar"
+}
+
+todo.title = "Hello" // Error: cannot reassign a readonly property
+todo.description = "barFoo" // Error: cannot reassign a readonly property
+
+// Tuple To Object
+
+const tuple = ['tesla', 'model 3', 'model X', 'model Y'] as const
+
+
+type TupleToObject<T extends readonly string[] > = {
+    [k in  T[number]]: k
+}
+
+type typleType = typeof tuple
+
+type result = TupleToObject<typleType> // expected { 'tesla': 'tesla', 'model 3': 'model 3', 'model X': 'model X', 'model Y': 'model Y'}
