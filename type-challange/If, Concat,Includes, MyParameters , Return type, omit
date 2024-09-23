@@ -1,0 +1,60 @@
+//If
+type If<C,T,P> = C extends true ? T:P
+
+type A = If<true, 'a', 'b'>  // expected to be 'a'
+type B = If<false, 'a', 'b'> // expected to be 'b'
+
+//Concat
+type Concat<T extends any[],P extends any[]> = [...T,...P]
+
+
+type Result = Concat<[1], [2]> // expected to be [1, 2]
+
+// Includes
+
+type Includes<T extends any[],P> = {
+    [U in T[number]]: true
+}[P] extends true ? true: false
+
+type isPillarMen = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'> // expected to be `false`
+
+//MyParameters
+
+const foo = (arg1: string, arg2: number): void => {}
+
+type MyParameters<T> = T extends (...args: infer P) => void? P : never
+
+type FunctionParamsType = MyParameters<typeof foo> // [arg1: string, arg2: number]
+
+// Return type
+
+const fn = (v: boolean) => {
+  if (v)
+    return 1
+  else
+    return 2
+}
+
+
+type MyReturnType<T> = T extends (...args:any) => infer P ? P:never
+
+type a = MyReturnType<typeof fn> // should be "1 | 2"
+
+
+// Omit 
+
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+type MyOmit<T, P extends keyof T> = {
+  [K in keyof T as K extends P ? never : K]:T[K]
+}
+
+type TodoPreview = MyOmit<Todo, 'description' | 'title'>
+
+const todo: TodoPreview = {
+  completed: false,
+}
